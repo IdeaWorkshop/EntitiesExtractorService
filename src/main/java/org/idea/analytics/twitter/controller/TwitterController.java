@@ -1,5 +1,6 @@
 package org.idea.analytics.twitter.controller;
 
+import org.idea.analytics.twitter.model.TweetWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.social.twitter.api.SearchResults;
 import org.springframework.social.twitter.api.Tweet;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -30,9 +32,19 @@ public class TwitterController {
     }
 
     @RequestMapping(value = TWEETS+HANDLE, method = RequestMethod.GET)
-    public List<Tweet> tweets(@PathVariable String twitterHandle) {
+    public List<TweetWrapper> tweets(@PathVariable String twitterHandle) {
         List<Tweet> tweets = getTwitter().timelineOperations().getUserTimeline(twitterHandle);
-        return tweets;
+        List<TweetWrapper> tweets1 = new ArrayList<>();
+        tweets.forEach((tweet)->{
+            TweetWrapper wrapper = new TweetWrapper();
+            wrapper.setId(tweet.getIdStr());
+            wrapper.setCreatedAt(tweet.getCreatedAt());
+            wrapper.setFromUser(tweet.getFromUser());
+            wrapper.setText(tweet.getText());
+            wrapper.setLanguageCode(tweet.getLanguageCode());
+            tweets1.add(wrapper);
+        });
+        return tweets1;
     }
 
     @RequestMapping(value = PROFILES + HANDLE, method = RequestMethod.GET)
