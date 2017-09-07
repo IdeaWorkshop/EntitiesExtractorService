@@ -20,22 +20,30 @@ public class EntitiesExtractorImpl implements EntitiesExtractor {
                 .setContentUri(uri)
                 .setLanguageCode(LanguageCode.ENGLISH)
                 .build();
-        EntitiesResponse response = request.send();
-        List<EntityMention> mentionList = response.getEntities();
+
+        Map<String, List<Entity>> entityMap = new HashMap<>();
         List<Entity> persons = new ArrayList<>();
         List<Entity> products = new ArrayList<>();
         List<Entity> locations = new ArrayList<>();
-
-        mentionList.forEach((entity) -> {
-            if ("PERSON".equals(entity.getType())) addEntity(entity, persons);
-            else if ("ORGANIZATION".equals(entity.getType())) addEntity(entity, products);
-            else if ("LOCATION".equals(entity.getType())) addEntity(entity, locations);
-            else if ("PRODUCT".equals(entity.getType())) addEntity(entity, products);
-        });
-        Map<String, List<Entity>> entityMap = new HashMap<>();
         entityMap.put("persons", persons);
         entityMap.put("locations", locations);
         entityMap.put("products", products);
+
+        try {
+            EntitiesResponse response = request.send();
+            List<EntityMention> mentionList = response.getEntities();
+
+            mentionList.forEach((entity) -> {
+                if ("PERSON".equals(entity.getType())) addEntity(entity, persons);
+                else if ("ORGANIZATION".equals(entity.getType())) addEntity(entity, products);
+                else if ("LOCATION".equals(entity.getType())) addEntity(entity, locations);
+                else if ("PRODUCT".equals(entity.getType())) addEntity(entity, products);
+            });
+
+        } catch (Exception e ){
+            e.printStackTrace();
+        }
+
         return entityMap;
     }
 
@@ -46,5 +54,4 @@ public class EntitiesExtractorImpl implements EntitiesExtractor {
         entity.setType(entityMention.getType());
         entities.add(entity);
     }
-
 }
