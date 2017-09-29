@@ -25,8 +25,11 @@ public class WebScraperController {
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<URL>> getUrls(final WebRequest request) {
         String searchQuery = request.getParameter("q");
-        if (searchQuery == null || searchQuery.trim().isEmpty()) return null;
-        List<URL> urls = scraperService.getUrls(searchQuery);
+        List<URL> urls = null;
+        if (searchQuery == null || searchQuery.trim().isEmpty()) {
+            new ResponseEntity<>(null, HttpStatus.OK);
+        }
+        urls = scraperService.getUrls(searchQuery);
         ResponseEntity<List<URL>> response = new ResponseEntity<List<URL>>(urls, HttpStatus.OK);
         return response;
     }

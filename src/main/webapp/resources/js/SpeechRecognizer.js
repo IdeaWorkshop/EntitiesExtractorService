@@ -15,12 +15,15 @@ if (!('webkitSpeechRecognition' in window)) {
     recognition.interimResults = true;
 
     recognition.onstart = function () {
+        console.log("in Start")
         recognizing = true;
         start_img.src = '/resources/img/mic-animate.gif';
+
         
     };
 
     recognition.onerror = function (event) {
+        console.log(event.error);
         if (event.error == 'no-speech') {
             start_img.src = '/resources/img/mic.gif';
             showInfo('info_no_speech');
@@ -132,8 +135,10 @@ function sendFinalTranscriptToServer() {
         recognition.stop();
     }
 	var searchQuery = encodeURIComponent(final_transcript);
+	
+	
 	 $.ajax({	
-		url: "search/?q="+searchQuery,
+		url: "http://52CQYX1J:8080/search/?q="+searchQuery,
 		method: "GET",
 		
 		success: function(result){

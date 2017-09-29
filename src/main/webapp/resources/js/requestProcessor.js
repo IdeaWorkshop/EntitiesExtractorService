@@ -58,7 +58,7 @@ function processSelectedUrl() {
     });
     var selectedUrl = favorite[0];
     $.ajax({
-        url: 'entities/?url=' + selectedUrl,
+        url: 'http://52CQYX1J:8080/entities/?url=' + selectedUrl,
         method: "GET",
 
         success: function (result) {
